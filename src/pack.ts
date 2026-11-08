@@ -54,8 +54,10 @@ function kindOf(relative: string): MaterialKind {
  * @param root - 绝对路径。
  * @returns 材料报告。
  */
-export async function scanMaterials(root: string): Promise<MaterialReport> {
+export async function scanMaterials(root: string, options: { maxEntries?: number } = {}): Promise<MaterialReport> {
+  const maxEntries = options.maxEntries ?? 2000
   const entries: MaterialEntry[] = []
+  let truncated = false
   let listing: Dirent[] = []
   try {
     listing = await readdir(root, { withFileTypes: true })
@@ -63,6 +65,7 @@ export async function scanMaterials(root: string): Promise<MaterialReport> {
     listing = []
   }
   for (const entry of listing.sort((left, right) => left.name.localeCompare(right.name))) {
+    if (entries.length >= maxEntries) { truncated = true; break }
     if (entry.name.startsWith('.') || entry.isDirectory()) continue
     if (!entry.isFile()) continue
     const absolute = path.join(root, entry.name)
@@ -86,6 +89,9 @@ export async function scanMaterials(root: string): Promise<MaterialReport> {
   }
   if (!has('cv')) {
     issues.push({ code: 'no_cv', severity: 'info', detail: '未找到申请人简历', suggestion: '部分项目类型需要简历，按指南确认' })
+  }
+  if (truncated) {
+    issues.push({ code: 'materials_truncated', severity: 'info', detail: `材料扫描在 ${maxEntries} 个文件后停止`, suggestion: '提高 maxEntries 或缩小扫描目录；报告未覆盖全部文件' })
   }
   if (!has('attachment')) {
     issues.push({ code: 'no_attachments', severity: 'info', detail: '未找到代表性成果/附件', suggestion: '按指南要求附代表性成果清单' })
