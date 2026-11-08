@@ -1,0 +1,14 @@
+# dsh-grant-cn bundle patch: mount the Chinese grant-application tools.
+#
+# Every key below is a Config field (Schemastery schema); invalid values fail the
+# profile load loudly. All checks are local; nothing is uploaded.
+- insert:
+    - id: dsh-grant-cn
+      name: dsh-grant-cn
+      config:
+        enabled: true
+        root: .grant-cn
+        # 字符上限：超限失败，绝不截断
+        maxChars: 1000000
+        # 是否把检查过的本子写入 REP 证据与记录
+        persist: true
