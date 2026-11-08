@@ -125,9 +125,11 @@ export function detectAttributes(text: string): ScienceAttribute[] {
 
 /** 识别项目类型（仅作元数据）。 */
 export function detectScheme(text: string): Scheme {
-  if (/青年科学基金|青年基金|青年项目/u.test(text)) return '青年'
+  // Check the more specific talent programmes before the generic 青年 pattern:
+  // "优秀青年科学基金" and "国家杰出青年科学基金" both contain "青年科学基金".
   if (/优秀青年科学基金|优青/u.test(text)) return '优青'
-  if (/国家杰出青年|杰青/u.test(text)) return '杰青'
+  if (/国家杰出青年|杰出青年科学基金|杰青/u.test(text)) return '杰青'
+  if (/青年科学基金|青年基金|青年项目/u.test(text)) return '青年'
   if (/重点项目|重点支持/u.test(text)) return '重点'
   if (/面上项目/u.test(text)) return '面上'
   return SCHEMES[5]

@@ -77,6 +77,8 @@ describe('章节与条目', () => {
     expect(detectAttributes('需求牵引、突破瓶颈')).toEqual(['C'])
     expect(detectAttributes('共性导向、交叉融通')).toEqual(['D'])
     expect(detectScheme('国家自然科学基金青年科学基金项目')).toBe('青年')
+    expect(detectScheme('优秀青年科学基金项目')).toBe('优青')
+    expect(detectScheme('国家杰出青年科学基金项目')).toBe('杰青')
     expect(detectScheme('面上项目')).toBe('面上')
     expect(detectScheme('重点项目')).toBe('重点')
     expect(detectScheme('其他项目')).toBe('其他')
@@ -124,5 +126,13 @@ describe('预算', () => {
   it('没有测算依据时给出提醒', () => {
     const result = checkBudget({ items: [{ category: '设备费', amount: 10 }, { category: '间接费用', amount: 2 }] })
     expect(result.checks.some(check => check.code === 'no-basis')).toBe(true)
+  })
+
+  it('非法金额被报出且不会把合计变成 NaN', () => {
+    const result = checkBudget({ items: [{ category: '设备费', amount: 10 }, { category: '业务费', amount: 'oops' as never }] })
+    expect(result.valid).toBe(false)
+    expect(Number.isFinite(result.direct)).toBe(true)
+    expect(result.direct).toBe(10)
+    expect(result.checks.some(check => check.code === 'invalid-amount')).toBe(true)
   })
 })

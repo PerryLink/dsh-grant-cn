@@ -58,10 +58,10 @@ const INDIRECT = '间接费用'
  * @returns 合计、检查项与结论。
  */
 export function checkBudget(request: BudgetRequest): BudgetResult {
-  const categories = request.categories ?? DEFAULT_BUDGET_CATEGORIES
+  const categories = Array.isArray(request.categories) ? request.categories : DEFAULT_BUDGET_CATEGORIES
   const checks: BudgetCheck[] = []
   const issues: string[] = []
-  const items = (request.items ?? []).map(item => ({ ...item }))
+  const items = (Array.isArray(request.items) ? request.items : []).map(item => ({ ...item }))
 
   if (items.length === 0) {
     checks.push({ code: 'empty', status: 'fail', detail: '预算没有任何科目' })
@@ -84,8 +84,11 @@ export function checkBudget(request: BudgetRequest): BudgetResult {
     seen.add(item.category)
   }
 
-  const direct = Number(items.filter(item => item.category !== INDIRECT).reduce((sum, item) => sum + item.amount, 0).toFixed(2))
-  const indirect = Number(items.filter(item => item.category === INDIRECT).reduce((sum, item) => sum + item.amount, 0).toFixed(2))
+  // Invalid (non-finite/negative) amounts are reported above and contribute 0
+  // to the totals, so one bad row cannot turn direct/indirect into NaN.
+  const amountOf = (item: BudgetItem): number => (typeof item.amount === 'number' && Number.isFinite(item.amount) && item.amount >= 0 ? item.amount : 0)
+  const direct = Number(items.filter(item => item.category !== INDIRECT).reduce((sum, item) => sum + amountOf(item), 0).toFixed(2))
+  const indirect = Number(items.filter(item => item.category === INDIRECT).reduce((sum, item) => sum + amountOf(item), 0).toFixed(2))
   const total = Number((direct + indirect).toFixed(2))
 
   if (request.totalDirect !== undefined) {
@@ -111,7 +114,7 @@ export function checkBudget(request: BudgetRequest): BudgetResult {
   if (indirect === 0 && categories.includes(INDIRECT)) {
     checks.push({ code: 'no-indirect', status: 'warn', detail: '未填间接费用：若依托单位允许，可填 0，但需确认指南要求' })
   }
-  if (!items.some(item => item.note !== undefined && item.note.trim() !== '')) {
+  if (!items.some(item => typeof item.note === 'string' && item.note.trim() !== '')) {
     checks.push({ code: 'no-basis', status: 'warn', detail: '没有任何科目给出测算依据，评审会追问' })
   }
   const valid = !checks.some(check => check.status === 'fail')

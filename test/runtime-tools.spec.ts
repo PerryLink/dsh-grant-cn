@@ -56,7 +56,15 @@ describe('runtime', () => {
     await expect(runtime().check({ path: 'grant.docx' })).rejects.toMatchObject({ code: 'UNSUPPORTED_FILE' })
     const tiny = new GrantRuntime({ config: resolveConfig({ workspaceRoot: workspace, root: store, maxChars: 10 }), now: () => AT })
     await expect(tiny.check({ text: GRANT })).rejects.toMatchObject({ code: 'TOO_LARGE' })
+    await writeFile(path.join(workspace, 'large.md'), 'x'.repeat(41), 'utf8')
+    await expect(tiny.check({ path: 'large.md' })).rejects.toMatchObject({ code: 'TOO_LARGE' })
     await expect(runtime().check({})).rejects.toBeInstanceOf(GrantError)
+  })
+
+  it('拒绝非法预算字段而不是让 NaN 或字符串泄漏进合计', () => {
+    expect(() => runtime().budget({ items: [{ category: '设备费', amount: '10' as never }] })).toThrowError(expect.objectContaining({ code: 'INVALID_INPUT' }))
+    expect(() => runtime().budget({ items: [], totalDirect: '10' as never })).toThrowError(expect.objectContaining({ code: 'INVALID_INPUT' }))
+    expect(() => runtime().budget({ items: [], categories: '设备费' as never })).toThrowError(expect.objectContaining({ code: 'INVALID_INPUT' }))
   })
 
   it('扫描材料包并导出 JSON/Markdown', async () => {
@@ -107,6 +115,12 @@ describe('tools', () => {
 
   it('失败分支带稳定错误码', async () => {
     const value = (await makeGrantCheckTool(runtime()).execute({}, EXEC)) as { ok: false; error: { code: string } }
+    expect(value.ok).toBe(false)
+    expect(value.error.code).toBe('INVALID_INPUT')
+  })
+
+  it('grant_budget 的非法金额返回 ok:false', async () => {
+    const value = (await makeGrantBudgetTool(runtime()).execute({ items: [{ category: '设备费', amount: '10' }] }, EXEC)) as { ok: false; error: { code: string } }
     expect(value.ok).toBe(false)
     expect(value.error.code).toBe('INVALID_INPUT')
   })

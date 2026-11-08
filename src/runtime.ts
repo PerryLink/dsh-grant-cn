@@ -148,6 +148,7 @@ export class GrantRuntime {
    */
   async check(request: GrantCheckRequest): Promise<GrantCheckResult> {
     if ((request.text === undefined) === (request.path === undefined)) throw new GrantError('INVALID_INPUT', 'text 与 path 必须二选一')
+    if (request.text !== undefined && typeof request.text !== 'string') throw new GrantError('INVALID_INPUT', 'text 必须是字符串')
     let text: string
     let sourceRef: AddEvidenceInput['sourceRef']
     let mediaType: Snapshot['mediaType'] = 'text/plain'
@@ -158,6 +159,10 @@ export class GrantRuntime {
     } else {
       const file = await this.resolveFile(request.path!)
       if (/\.(docx?|pdf)$/iu.test(file.id)) throw new GrantError('UNSUPPORTED_FILE', 'docx/pdf 不在此解析；请转成 .md/.txt，或先用 dsh-doc-anchor 抽文本')
+      // 先按字节上限拒绝，避免在字符上限检查之前把超大文件读进内存。
+      const byteCap = this.config.maxChars * 4
+      const info = await stat(file.absolute)
+      if (info.size > byteCap) throw new GrantError('TOO_LARGE', `文件 ${info.size} 字节，超过 ${byteCap} 字节读取上限（对应 ${this.config.maxChars} 字）`)
       text = await readFile(file.absolute, 'utf8')
       if (text.length > this.config.maxChars) throw new GrantError('TOO_LARGE', `本子 ${text.length} 字，超过上限 ${this.config.maxChars}`)
       mediaType = file.id.endsWith('.md') ? 'text/markdown' : 'text/plain'
@@ -210,7 +215,23 @@ export class GrantRuntime {
    * @returns 校验结果。
    */
   budget(request: BudgetRequest): BudgetResult {
-    if (!Array.isArray(request.items)) throw new GrantError('INVALID_INPUT', 'items 必须是数组')
+    if (typeof request !== 'object' || request === null || !Array.isArray(request.items)) throw new GrantError('INVALID_INPUT', 'items 必须是数组')
+    for (const item of request.items) {
+      if (typeof item !== 'object' || item === null) throw new GrantError('INVALID_INPUT', 'items 的每一项必须是对象')
+      if (typeof item.category !== 'string' || item.category.trim() === '') throw new GrantError('INVALID_INPUT', '每个预算科目都需要非空 category')
+      if (typeof item.amount !== 'number' || !Number.isFinite(item.amount) || item.amount < 0) throw new GrantError('INVALID_INPUT', `科目“${item.category}”的 amount 必须是非负有限数字`)
+      if (item.note !== undefined && typeof item.note !== 'string') throw new GrantError('INVALID_INPUT', `科目“${item.category}”的 note 必须是字符串`)
+    }
+    if (request.categories !== undefined) {
+      if (!Array.isArray(request.categories) || request.categories.some(category => typeof category !== 'string' || category.trim() === '')) {
+        throw new GrantError('INVALID_INPUT', 'categories 必须是非空字符串数组')
+      }
+    }
+    for (const [name, value] of [['totalDirect', request.totalDirect], ['totalIndirect', request.totalIndirect], ['total', request.total]] as const) {
+      if (value !== undefined && (typeof value !== 'number' || !Number.isFinite(value) || value < 0)) {
+        throw new GrantError('INVALID_INPUT', `${name} 必须是非负有限数字`)
+      }
+    }
     return checkBudget(request)
   }
 

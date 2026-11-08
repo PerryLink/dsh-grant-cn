@@ -6,6 +6,22 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- `detectScheme` checks 优青/杰青 before the generic 青年 pattern; both
+  "优秀青年科学基金" and "国家杰出青年科学基金" contain "青年科学基金", so
+  they were previously misreported as 青年.
+- Validate budget items/categories/totals in the runtime: a string or NaN
+  amount and a non-array category list now fail with `INVALID_INPUT` instead of
+  crashing or poisoning the totals; invalid amounts contribute 0.
+- A proposal file is rejected from its byte size before `readFile`, so the
+  character cap cannot be bypassed by a huge file.
+- `check` rejects a non-string `text` as `INVALID_INPUT`.
+
+### Changed
+
+- Test count is now 19; README/CHANGELOG list the new failure branches.
+
 ## [0.1.0] - 2026-11-08
 
 First release: the Chinese grant-application checklist.
