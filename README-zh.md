@@ -1,13 +1,22 @@
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-grant-cn-hero-zh-dark.webp">
+  <img src="docs/assets/dsh-grant-cn-hero-zh-light.webp" width="100%" alt="dsh-grant-cn 配图：一份合成的完整中文本子通过 19 项起步清单——19/19 命中、科学问题属性 C、项目类型其他；经费预算直接费用 35 加间接费用 6 合计 41；右侧是材料包扫描与 REP v1 证据">
+</picture>
+
 # dsh-grant-cn
 
 **投稿/申报前：本子的检查清单是否齐、预算算术是否对、材料包是否真的打包了？**
 
 *面向中文基金申请书（国家自然科学基金等）的起步清单：19 项结构/属性/声明检查、预算算术与结构校验、申请材料包扫描。关键词清单，不是评审结论。*
 
+[English](README.md) · [Español](README-es.md) · [Português](README-pt.md) · [हिन्दी](README-hi.md)
+
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%5E22.19%20%7C%7C%20%3E%3D24.9-brightgreen.svg)]()
 
-[English](README.md) · 简体中文
+</div>
 
 ---
 
@@ -16,6 +25,14 @@
 - **`grant_check`** —— 检查 19 项：项目名称、摘要、**科学问题属性 A/B/C/D**、立项依据、研究目标、研究内容、研究方案、技术路线、创新点、可行性、研究基础、工作条件、申请人/团队、经费预算、预算说明、伦理、数据共享、限项、参考文献。命中项带字符定位，缺失项带建议；给出覆盖率、核心缺失项、识别到的属性与项目类型（青年/面上/重点/优青/杰青/其他，仅元数据）。
 - **`grant_budget`** —— 科目是否在允许列表、金额是否非负、是否重复、直接/间接/总经费是否与科目之和一致、是否有测算依据。默认科目：**设备费、业务费、劳务费、间接费用**（2021 年以来 NSFC 直接费用三类 + 间接费用），可用 `categories` 覆盖。
 - **`grant_pack`** —— 扫描材料目录：申请书正文、预算表、伦理批件、承诺书/声明、简历、代表性成果附件；缺失项分级 + 建议；输出 JSON + Markdown。
+
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-grant-cn-flow-v5-dark.svg">
+  <img src="docs/assets/dsh-grant-cn-flow-v5-light.svg" width="100%" alt="dsh-grant-cn 结构图：本子文本或工作区路径先经过 19 项关键词检查（带字符定位与建议），再做预算算术与结构校验，最后是按文件名只读扫描的材料包；输出 JSON、Markdown 与一条 REP v1 证据，最终判断仍由申请人与评审做出">
+</picture>
+
+*结构：检查 → 预算 → 材料包；19 项清单、预算结果与材料报告是三条独立输出，没有一条是评审结论。图内只有工具名与字段名，五语共用同一张结构图。*
 
 ## 它不做什么
 
@@ -81,6 +98,11 @@ dsh --profile <name> --dump-config | grep dsh-grant-cn
 - 材料包扫描只看文件名，不打开内容。
 
 ## 评测
+
+![dsh-grant-cn：仓库自身构建与测试门禁的真实运行——TypeScript 构建、3 个测试文件、包面校验，全部离线](docs/assets/dsh-grant-cn-demo.gif)
+
+*动图是仓库自身 `pnpm run build` → `pnpm test` → `pnpm run verify:package` 的真实 stdout（离线 fixture、不联网；2026-11-21 复跑）。测试套件共 3 个文件、20 个测试，全部通过。*
+
 
 **19 个测试**：中文编号章节切分、完整本子 19/19、空本子缺失与属性提示、四类属性与项目类型识别（含优青/杰青的优先匹配）、预算（一致通过、合计不一致、负数、未知科目、重复科目、空预算、无测算依据、非法金额不污染合计）、runtime（合法 REP 记录、文件读取、越界/二进制/超限拒绝含读取前字节上限、预算字段校验）、材料包扫描与导出、工具 schema 与失败分支、包契约。
 
