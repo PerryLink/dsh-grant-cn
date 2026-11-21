@@ -106,7 +106,7 @@ dsh --profile <name> --dump-config | grep dsh-grant-cn
 *Animated: real stdout of the repository's own `pnpm run build` → `pnpm test` → `pnpm run verify:package` (offline fixtures, no network; re-run 2026-11-21). The suite passes 20 tests across 3 files.*
 
 
-**19 tests**: splitting Chinese numbered sections, a complete proposal at 19/19, missing items and attribute hints for an empty proposal, the four attributes and project-type detection (including the 优青/杰青 priority match), budget (consistent pass, sum mismatch, negative amount, unknown category, duplicate category, empty budget, no basis, invalid amount not poisoning the totals), runtime (valid REP record, file reading, out-of-workspace / binary / over-limit rejection including the pre-read byte cap, budget field validation), materials-pack scan and exports, tool schemas and failure branches, package contract.
+**20 tests**: splitting Chinese numbered sections, a complete proposal at 19/19, missing items and attribute hints for an empty proposal, the four attributes and project-type detection (including the 优青/杰青 priority match), budget (consistent pass, sum mismatch, negative amount, unknown category, duplicate category, empty budget, no basis, invalid amount not poisoning the totals), runtime (valid REP record, file reading, out-of-workspace / binary / over-limit rejection including the pre-read byte cap, budget field validation), materials-pack scan and exports, tool schemas and failure branches, package contract.
 
 No benchmark is claimed: the ground truth is "would a human also call this item missing", which needs an adjudicated corpus; the current evidence is unit fixtures.
 
