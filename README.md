@@ -26,7 +26,6 @@
 - **`grant_budget`** — checks that categories are on the allow list, amounts are non-negative, no category is duplicated, the direct / indirect / total sums match the item amounts, and at least one budget basis is given. Default categories: **设备费 equipment, 业务费 operations, 劳务费 labour, 间接费用 indirect** — the three direct-cost categories NSFC has used since 2021 plus indirect costs; `categories` can override them.
 - **`grant_pack`** — scans a materials directory: application text, budget sheet, ethics approval, commitment/declaration, CV, representative-output attachments; missing items are graded with advice; returns JSON + Markdown.
 
-
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-grant-cn-flow-v5-dark.svg">
   <img src="docs/assets/dsh-grant-cn-flow-v5-light.svg" width="100%" alt="dsh-grant-cn structure: proposal text or a workspace path goes through 19 keyword checks with character locators and advice, then budget arithmetic and structure checks, then a file-name-only materials-pack scan; the outputs are JSON, Markdown and a REP v1 evidence record, and the final call stays with the applicant and the reviewers">
@@ -72,7 +71,7 @@ Non-core items (missing = info): working conditions, applicant/team, ethics, dat
 
 | | |
 |---|---|
-| DeepSeek Harness | **`dsh-v0.2.2-rc.4`** (verified 2026-11-18); peer `>=0.2.1-0 <0.3.0 \|\| >=0.2.2-0 <0.3.0` |
+| DeepSeek Harness | **`dsh-v0.2.3-alpha.1`** (verified 2026-11-22); peer `>=0.2.1-0 <0.3.0 \|\| >=0.2.2-0 <0.3.0` |
 | Node | `^22.19.0 \|\| >=24.9.0` (tested `24.22.1`), ESM only |
 | Peers | `@perrylink/dsh-research-core ^0.1.0`, `@deepseek-ai/cordis ^4.0.5-alpha.1`, `@deepseek-ai/dsh-tools`, `@deepseek-ai/schemastery ^3.18.5-alpha.1` |
 | Runtime dependencies | **zero** |
@@ -104,7 +103,6 @@ dsh --profile <name> --dump-config | grep dsh-grant-cn
 ![dsh-grant-cn: a real run of the repository gates — the TypeScript build, the 3-file test suite and the package-surface check, all offline](docs/assets/dsh-grant-cn-demo.gif)
 
 *Animated: real stdout of the repository's own `pnpm run build` → `pnpm test` → `pnpm run verify:package` (offline fixtures, no network; re-run 2026-11-21). The suite passes 20 tests across 3 files.*
-
 
 **20 tests**: splitting Chinese numbered sections, a complete proposal at 19/19, missing items and attribute hints for an empty proposal, the four attributes and project-type detection (including the 优青/杰青 priority match), budget (consistent pass, sum mismatch, negative amount, unknown category, duplicate category, empty budget, no basis, invalid amount not poisoning the totals), runtime (valid REP record, file reading, out-of-workspace / binary / over-limit rejection including the pre-read byte cap, budget field validation), materials-pack scan and exports, tool schemas and failure branches, package contract.
 

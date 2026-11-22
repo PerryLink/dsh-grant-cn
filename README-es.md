@@ -71,7 +71,7 @@ Elementos no centrales (ausente = info): condiciones de trabajo, solicitante/equ
 
 | | |
 |---|---|
-| DeepSeek Harness | **`dsh-v0.2.2-rc.4`** (verificado 2026-11-18); peer `>=0.2.1-0 <0.3.0 \|\| >=0.2.2-0 <0.3.0` |
+| DeepSeek Harness | **`dsh-v0.2.3-alpha.1`** (verificado 2026-11-22); peer `>=0.2.1-0 <0.3.0 \|\| >=0.2.2-0 <0.3.0` |
 | Node | `^22.19.0 \|\| >=24.9.0` (probado `24.22.1`), solo ESM |
 | Peers | `@perrylink/dsh-research-core ^0.1.0`, `@deepseek-ai/cordis ^4.0.5-alpha.1`, `@deepseek-ai/dsh-tools`, `@deepseek-ai/schemastery ^3.18.5-alpha.1` |
 | Dependencias en tiempo de ejecución | **cero** |
@@ -103,7 +103,6 @@ dsh --profile <name> --dump-config | grep dsh-grant-cn
 ![dsh-grant-cn: una ejecución real de las puertas del repositorio — la compilación TypeScript, la suite de 3 archivos y la comprobación de la superficie del paquete, todo sin conexión](docs/assets/dsh-grant-cn-demo.gif)
 
 *Animado: stdout real de `pnpm run build` → `pnpm test` → `pnpm run verify:package` del propio repositorio (fixtures sin conexión, sin red; reejecutado el 2026-11-21). La suite pasa 20 pruebas en 3 archivos.*
-
 
 **20 pruebas**: división de secciones numeradas en chino, una solicitud completa con 19/19, elementos ausentes y avisos de atributo para una solicitud vacía, los cuatro atributos y la detección del tipo de proyecto (incluida la coincidencia prioritaria 优青/杰青), presupuesto (pasa consistente, suma que no cuadra, importe negativo, categoría desconocida, categoría duplicada, presupuesto vacío, sin base de cálculo, importe inválido que no envenena los totales), runtime (registro REP válido, lectura de archivos, rechazo fuera del espacio de trabajo / binario / fuera de límite incluido el tope de bytes antes de leer, validación de campos del presupuesto), escaneo del paquete de materiales y exportaciones, esquemas de herramientas y ramas de fallo, contrato del paquete.
 

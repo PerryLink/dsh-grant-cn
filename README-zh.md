@@ -26,7 +26,6 @@
 - **`grant_budget`** —— 科目是否在允许列表、金额是否非负、是否重复、直接/间接/总经费是否与科目之和一致、是否有测算依据。默认科目：**设备费、业务费、劳务费、间接费用**（2021 年以来 NSFC 直接费用三类 + 间接费用），可用 `categories` 覆盖。
 - **`grant_pack`** —— 扫描材料目录：申请书正文、预算表、伦理批件、承诺书/声明、简历、代表性成果附件；缺失项分级 + 建议；输出 JSON + Markdown。
 
-
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-grant-cn-flow-v5-dark.svg">
   <img src="docs/assets/dsh-grant-cn-flow-v5-light.svg" width="100%" alt="dsh-grant-cn 结构图：本子文本或工作区路径先经过 19 项关键词检查（带字符定位与建议），再做预算算术与结构校验，最后是按文件名只读扫描的材料包；输出 JSON、Markdown 与一条 REP v1 证据，最终判断仍由申请人与评审做出">
@@ -70,7 +69,7 @@
 
 | | |
 |---|---|
-| DeepSeek Harness | **`dsh-v0.2.2-rc.4`**（2026-11-18 实测）；peer `>=0.2.1-0 <0.3.0 \|\| >=0.2.2-0 <0.3.0` |
+| DeepSeek Harness | **`dsh-v0.2.3-alpha.1`**（2026-11-22 实测）；peer `>=0.2.1-0 <0.3.0 \|\| >=0.2.2-0 <0.3.0` |
 | Node | `^22.19.0 \|\| >=24.9.0`（实测 `24.22.1`），仅 ESM |
 | Peer 依赖 | `@perrylink/dsh-research-core ^0.1.0`、`@deepseek-ai/cordis ^4.0.5-alpha.1`、`@deepseek-ai/dsh-tools`、`@deepseek-ai/schemastery ^3.18.5-alpha.1` |
 | 运行时依赖 | **零** |
@@ -102,7 +101,6 @@ dsh --profile <name> --dump-config | grep dsh-grant-cn
 ![dsh-grant-cn：仓库自身构建与测试门禁的真实运行——TypeScript 构建、3 个测试文件、包面校验，全部离线](docs/assets/dsh-grant-cn-demo.gif)
 
 *动图是仓库自身 `pnpm run build` → `pnpm test` → `pnpm run verify:package` 的真实 stdout（离线 fixture、不联网；2026-11-21 复跑）。测试套件共 3 个文件、20 个测试，全部通过。*
-
 
 **20 个测试**：中文编号章节切分、完整本子 19/19、空本子缺失与属性提示、四类属性与项目类型识别（含优青/杰青的优先匹配）、预算（一致通过、合计不一致、负数、未知科目、重复科目、空预算、无测算依据、非法金额不污染合计）、runtime（合法 REP 记录、文件读取、越界/二进制/超限拒绝含读取前字节上限、预算字段校验）、材料包扫描与导出、工具 schema 与失败分支、包契约。
 
