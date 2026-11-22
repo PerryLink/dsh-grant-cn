@@ -7,6 +7,8 @@
 
 # dsh-grant-cn
 
+当前版本 `0.1.5`。
+
 **Before you submit: is the checklist complete, is the budget arithmetic right, and is the materials pack actually assembled?**
 
 *A starter checklist for Chinese grant applications (National Natural Science Foundation of China and similar): 19 structure / attribute / declaration checks, budget arithmetic and structure validation, and an application-materials pack scan. A keyword checklist, not a review verdict.*
